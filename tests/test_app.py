@@ -20,3 +20,12 @@ def test_run_healthcheck(mock_run):
     result = run_healthcheck("localhost")
 
     assert "packets transmitted" in result
+
+
+def test_run_healthcheck_real_ping_to_loopback():
+    """Real (non-mocked) ping, run against every OS in CI's matrix -- catches
+    platform-specific command flags that a Linux-only dev/agent sandbox has no
+    way to observe locally."""
+    result = run_healthcheck("127.0.0.1")
+
+    assert "127.0.0.1" in result
