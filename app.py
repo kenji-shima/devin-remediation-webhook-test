@@ -1,6 +1,9 @@
-import subprocess
+import shutil
+import subprocess  # nosec B404 - only used with a fixed argument list and shell=False
 
 import requests
+
+PING_BINARY = shutil.which("ping") or "/bin/ping"
 
 
 def fetch_status_message(url: str) -> str:
@@ -11,5 +14,7 @@ def fetch_status_message(url: str) -> str:
 
 def run_healthcheck(host: str) -> str:
     """Ping a host once and return the raw output."""
-    result = subprocess.run(f"ping -c 1 {host}", shell=True, capture_output=True, text=True)
+    result = subprocess.run(  # nosec B603 - fixed argv, host is passed as a single argument
+        [PING_BINARY, "-c", "1", host], shell=False, capture_output=True, text=True
+    )
     return result.stdout
